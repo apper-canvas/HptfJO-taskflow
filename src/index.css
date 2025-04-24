@@ -2,32 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* Custom scroll styling for columns */
+.task-board-container {
+  padding-bottom: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+.task-board-container::-webkit-scrollbar {
+  height: 8px;
 }
 
-/* Custom scrollbar for task columns */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 8px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-track {
+.task-board-container::-webkit-scrollbar-track {
   background: transparent;
+  margin: 0 6px;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
+.task-board-container::-webkit-scrollbar-thumb {
   background-color: rgba(156, 163, 175, 0.5);
   border-radius: 20px;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(156, 163, 175, 0.8);
+/* Scrollable column content styling */
+[data-rbd-droppable-id] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+[data-rbd-droppable-id]::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-rbd-droppable-id]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-rbd-droppable-id]::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+}
+
+/* Custom styles for dragging states */
+.is-dragging {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }

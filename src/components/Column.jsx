@@ -1,38 +1,44 @@
+import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
-import TaskCard from './TaskCard';
-import { Plus } from 'lucide-react';
+import Task from './Task';
 
-const Column = ({ column, tasks }) => {
+// Using default parameters instead of defaultProps
+const Column = ({ 
+  column, 
+  tasks = [], 
+  index,
+  isDropDisabled = false 
+}) => {
   return (
-    <div className="bg-gray-100 rounded-lg w-80 flex-shrink-0 flex flex-col">
-      <div className="p-4 font-semibold flex justify-between items-center">
-        <h2 className="text-gray-700">{column.title}</h2>
-        <span className="bg-gray-200 text-gray-700 rounded-full px-2 py-1 text-xs">
-          {tasks.length}
-        </span>
-      </div>
+    <div className="flex flex-col h-full w-72 min-w-72 bg-gray-50 rounded-lg shadow-md mx-2">
+      <h2 className="text-lg font-semibold p-4 bg-gray-100 rounded-t-lg border-b border-gray-200">
+        {column.title} ({tasks.length})
+      </h2>
       
-      <Droppable droppableId={column.id}>
+      <Droppable
+        droppableId={column.id}
+        isDropDisabled={isDropDisabled}
+        type="task"
+      >
         {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`flex-1 p-2 overflow-y-auto min-h-[200px] ${
+            className={`flex-1 p-2 overflow-y-auto transition-colors min-h-[200px] ${
               snapshot.isDraggingOver ? 'bg-blue-50' : ''
             }`}
           >
             {tasks.map((task, index) => (
-              <TaskCard key={task.id} task={task} index={index} />
+              <Task key={task.id} task={task} index={index} />
             ))}
             {provided.placeholder}
           </div>
         )}
       </Droppable>
       
-      <div className="p-2 border-t">
-        <button className="flex items-center justify-center w-full py-2 text-gray-600 hover:bg-gray-200 rounded transition">
-          <Plus size={16} className="mr-1" />
-          <span>Add Task</span>
+      <div className="p-3 bg-gray-100 rounded-b-lg border-t border-gray-200">
+        <button className="w-full py-2 px-3 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded border border-gray-300 flex items-center justify-center transition-colors">
+          <span className="mr-1">+</span> Add Task
         </button>
       </div>
     </div>
