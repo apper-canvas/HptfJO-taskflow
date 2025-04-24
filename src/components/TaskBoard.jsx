@@ -1,20 +1,54 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { reorderTasks } from '../store/taskSlice';
 import Column from './Column';
-import { moveTask, fetchTasks } from '../features/tasks/taskSlice';
 
 const TaskBoard = () => {
+  const tasks = useSelector((state) => state.tasks.tasks);
   const dispatch = useDispatch();
-  const { columns, tasks, status } = useSelector(state => state.tasks);
-
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchTasks());
+  
+  const [columns, setColumns] = useState({
+    'todo': {
+      id: 'todo',
+      title: 'To Do',
+      taskIds: []
+    },
+    'in-progress': {
+      id: 'in-progress',
+      title: 'In Progress',
+      taskIds: []
+    },
+    'completed': {
+      id: 'completed',
+      title: 'Completed',
+      taskIds: []
     }
-  }, [status, dispatch]);
+  });
 
-  const onDragEnd = result => {
+  // Group tasks by status
+  useEffect(() => {
+    const todoTasks = tasks.filter(task => task.status === 'todo').map(task => task.id);
+    const inProgressTasks = tasks.filter(task => task.status === 'in-progress').map(task => task.id);
+    const completedTasks = tasks.filter(task => task.status === 'completed').map(task => task.id);
+
+    setColumns({
+      'todo': {
+        ...columns['todo'],
+        taskIds: todoTasks
+      },
+      'in-progress': {
+        ...columns['in-progress'],
+        taskIds: inProgressTasks
+      },
+      'completed': {
+        ...columns['completed'],
+        taskIds: completedTasks
+      }
+    });
+  }, [tasks]);
+
+  const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
 
     // Dropped outside the list
@@ -30,47 +64,28 @@ const TaskBoard = () => {
       return;
     }
 
-    dispatch(moveTask({
-      taskId: draggableId,
-      sourceId: source.droppableId,
+    // Find the task being dragged
+    const taskId = parseInt(draggableId);
+    
+    dispatch(reorderTasks({
+      taskId,
+      sourceColumnId: source.droppableId,
+      destinationColumnId: destination.droppableId,
       sourceIndex: source.index,
-      destinationId: destination.droppableId,
       destinationIndex: destination.index
     }));
   };
 
-  // Get tasks for each column
-  const getTasksForColumn = columnId => {
-    return Object.values(tasks)
-      .filter(task => task.status === columnId)
-      .sort((a, b) => a.position - b.position);
-  };
-
-  if (status === 'loading') {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-500">Loading tasks...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="px-6 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Task Board</h1>
-        <button className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-          New Task
-        </button>
-      </div>
-
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Task Board</h1>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex overflow-x-auto py-2 pb-6 -mx-2 task-board-container">
-          {columns.map((column, index) => (
-            <Column
-              key={column.id}
-              column={column}
-              tasks={getTasksForColumn(column.id)}
-              index={index}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Object.values(columns).map(column => (
+            <Column 
+              key={column.id} 
+              column={column} 
+              tasks={column.taskIds.map(taskId => tasks.find(task => task.id === taskId))} 
             />
           ))}
         </div>

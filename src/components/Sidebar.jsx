@@ -1,57 +1,40 @@
-import { Home, CheckSquare, Settings, Users } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, ListTodo, Calendar, BarChart2, Settings, Kanban } from 'lucide-react';
 
 const Sidebar = () => {
+  const navLinks = [
+    { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+    { path: '/tasks', label: 'Tasks', icon: <ListTodo size={20} /> },
+    { path: '/board', label: 'Task Board', icon: <Kanban size={20} /> },
+    { path: '/calendar', label: 'Calendar', icon: <Calendar size={20} /> },
+    { path: '/reports', label: 'Reports', icon: <BarChart2 size={20} /> },
+    { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
+  ];
+
   return (
-    <div className="bg-gray-800 text-white w-64 flex-shrink-0 min-h-screen">
-      <div className="p-4">
-        <h1 className="text-2xl font-bold">TaskFlow</h1>
+    <div className="bg-white w-64 min-h-full border-r shadow-sm">
+      <div className="p-5 border-b">
+        <h1 className="text-xl font-bold text-blue-600">TaskFlow</h1>
       </div>
-      <nav className="mt-8">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `flex items-center py-3 px-6 hover:bg-gray-700 ${
-              isActive ? 'bg-gray-700' : ''
-            }`
-          }
-        >
-          <Home className="mr-3" size={20} />
-          <span>Dashboard</span>
-        </NavLink>
-        <NavLink
-          to="/tasks"
-          className={({ isActive }) =>
-            `flex items-center py-3 px-6 hover:bg-gray-700 ${
-              isActive ? 'bg-gray-700' : ''
-            }`
-          }
-        >
-          <CheckSquare className="mr-3" size={20} />
-          <span>Tasks</span>
-        </NavLink>
-        <NavLink
-          to="/team"
-          className={({ isActive }) =>
-            `flex items-center py-3 px-6 hover:bg-gray-700 ${
-              isActive ? 'bg-gray-700' : ''
-            }`
-          }
-        >
-          <Users className="mr-3" size={20} />
-          <span>Team</span>
-        </NavLink>
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            `flex items-center py-3 px-6 hover:bg-gray-700 ${
-              isActive ? 'bg-gray-700' : ''
-            }`
-          }
-        >
-          <Settings className="mr-3" size={20} />
-          <span>Settings</span>
-        </NavLink>
+      <nav className="p-4">
+        <ul className="space-y-2">
+          {navLinks.map((link) => (
+            <li key={link.path}>
+              <NavLink
+                to={link.path}
+                className={({ isActive }) => 
+                  `flex items-center px-4 py-3 rounded-lg transition-colors
+                  ${isActive 
+                    ? 'bg-blue-50 text-blue-600' 
+                    : 'text-gray-700 hover:bg-gray-100'}`
+                }
+              >
+                <span className="mr-3">{link.icon}</span>
+                {link.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       </nav>
     </div>
   );

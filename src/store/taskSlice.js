@@ -1,128 +1,100 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  columns: {
-    'column-1': {
-      id: 'column-1',
-      title: 'To Do',
-      taskIds: ['task-1', 'task-2', 'task-3']
+  tasks: [
+    {
+      id: 1,
+      title: 'Research market trends',
+      description: 'Analyze current market trends for our industry segment',
+      status: 'todo',
+      priority: 'high',
+      dueDate: '2023-08-15',
+      estimatedTime: 4,
+      assignedTo: 'John Smith',
     },
-    'column-2': {
-      id: 'column-2',
-      title: 'In Progress',
-      taskIds: ['task-4', 'task-5']
+    {
+      id: 2,
+      title: 'Prepare quarterly report',
+      description: 'Compile financial data and performance metrics',
+      status: 'in-progress',
+      priority: 'medium',
+      dueDate: '2023-07-30',
+      estimatedTime: 6,
+      assignedTo: 'Emily Johnson',
     },
-    'column-3': {
-      id: 'column-3',
-      title: 'Done',
-      taskIds: ['task-6']
-    }
-  },
-  tasks: {
-    'task-1': {
-      id: 'task-1',
-      title: 'Create project documentation',
-      description: 'Write comprehensive documentation for the new project',
-      priority: 'High',
-      dueDate: '2023-06-15'
+    {
+      id: 3,
+      title: 'Update website content',
+      description: 'Refresh product descriptions and add new customer testimonials',
+      status: 'completed',
+      priority: 'low',
+      dueDate: '2023-07-10',
+      estimatedTime: 3,
+      assignedTo: 'Michael Brown',
     },
-    'task-2': {
-      id: 'task-2',
-      title: 'Design user interface',
-      description: 'Create mockups for the main dashboard',
-      priority: 'Medium',
-      dueDate: '2023-06-20'
+    {
+      id: 4,
+      title: 'Develop marketing strategy',
+      description: 'Create a comprehensive marketing plan for Q3',
+      status: 'todo',
+      priority: 'high',
+      dueDate: '2023-08-05',
+      estimatedTime: 8,
+      assignedTo: 'Sarah Davis',
     },
-    'task-3': {
-      id: 'task-3',
-      title: 'Set up testing environment',
-      description: 'Configure Jest and React Testing Library',
-      priority: 'Low',
-      dueDate: '2023-06-25'
+    {
+      id: 5,
+      title: 'Client proposal review',
+      description: 'Review and finalize proposal for Enterprise client',
+      status: 'in-progress',
+      priority: 'medium',
+      dueDate: '2023-07-25',
+      estimatedTime: 2,
+      assignedTo: 'David Wilson',
     },
-    'task-4': {
-      id: 'task-4',
-      title: 'Implement authentication',
-      description: 'Add user login and registration functionality',
-      priority: 'High',
-      dueDate: '2023-06-18'
-    },
-    'task-5': {
-      id: 'task-5',
-      title: 'Create API endpoints',
-      description: 'Develop RESTful API for task management',
-      priority: 'Medium',
-      dueDate: '2023-06-22'
-    },
-    'task-6': {
-      id: 'task-6',
-      title: 'Project setup',
-      description: 'Initialize project with Vite and install dependencies',
-      priority: 'High',
-      dueDate: '2023-06-10'
-    }
-  },
-  columnOrder: ['column-1', 'column-2', 'column-3']
+  ],
 };
 
 const taskSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    reorderTasks: (state, action) => {
-      const { sourceCol, destCol, sourceIndex, destIndex } = action.payload;
-      
-      // If reordering in the same column
-      if (sourceCol === destCol) {
-        const column = state.columns[sourceCol];
-        const newTaskIds = Array.from(column.taskIds);
-        const [removed] = newTaskIds.splice(sourceIndex, 1);
-        newTaskIds.splice(destIndex, 0, removed);
-        
-        state.columns[sourceCol].taskIds = newTaskIds;
-      } else {
-        // Moving from one column to another
-        const sourceColumn = state.columns[sourceCol];
-        const destColumn = state.columns[destCol];
-        const sourceTaskIds = Array.from(sourceColumn.taskIds);
-        const destTaskIds = Array.from(destColumn.taskIds);
-        
-        // Remove from source column
-        const [removed] = sourceTaskIds.splice(sourceIndex, 1);
-        
-        // Insert into destination column
-        destTaskIds.splice(destIndex, 0, removed);
-        
-        state.columns[sourceCol].taskIds = sourceTaskIds;
-        state.columns[destCol].taskIds = destTaskIds;
-      }
-    },
     addTask: (state, action) => {
-      const { task, columnId } = action.payload;
-      // Add the task to the tasks object
-      state.tasks[task.id] = task;
-      // Add the task id to the specified column
-      state.columns[columnId].taskIds.push(task.id);
+      const newTask = {
+        id: state.tasks.length > 0 ? Math.max(...state.tasks.map(task => task.id)) + 1 : 1,
+        ...action.payload,
+      };
+      state.tasks.push(newTask);
     },
     updateTask: (state, action) => {
-      const updatedTask = action.payload;
-      state.tasks[updatedTask.id] = {
-        ...state.tasks[updatedTask.id],
-        ...updatedTask
-      };
+      const { id, ...updates } = action.payload;
+      const taskIndex = state.tasks.findIndex(task => task.id === id);
+      if (taskIndex !== -1) {
+        state.tasks[taskIndex] = { ...state.tasks[taskIndex], ...updates };
+      }
     },
     deleteTask: (state, action) => {
-      const { taskId, columnId } = action.payload;
-      // Remove task from tasks object
-      delete state.tasks[taskId];
-      // Remove task id from column
-      state.columns[columnId].taskIds = state.columns[columnId].taskIds.filter(
-        id => id !== taskId
-      );
+      state.tasks = state.tasks.filter(task => task.id !== action.payload);
+    },
+    reorderTasks: (state, action) => {
+      const { taskId, sourceColumnId, destinationColumnId, sourceIndex, destinationIndex } = action.payload;
+      
+      // Find the task
+      const task = state.tasks.find(t => t.id === taskId);
+      
+      if (task) {
+        // Update the task status if moved to a different column
+        if (sourceColumnId !== destinationColumnId) {
+          task.status = destinationColumnId;
+        }
+        
+        // We don't need to manually reorder the array for drag and drop visualization
+        // as our TaskBoard component will handle this through the column taskIds
+        // The status change is the important part for persistence
+      }
     }
-  }
+  },
 });
 
-export const { reorderTasks, addTask, updateTask, deleteTask } = taskSlice.actions;
-
+export const { addTask, updateTask, deleteTask, reorderTasks } = taskSlice.actions;
 export default taskSlice.reducer;
