@@ -1,64 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
-import Home from './pages/Home';
-import NotFound from './pages/NotFound';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import Board from './components/Board';
 
 function App() {
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem('darkMode');
-    return savedMode ? JSON.parse(savedMode) : 
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="py-4 px-6 bg-white dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700 shadow-sm">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <motion.div 
-              initial={{ rotate: -10 }}
-              animate={{ rotate: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-primary-dark dark:text-primary-light font-bold text-2xl"
-            >
-              TaskFlow
-            </motion.div>
-          </div>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors"
-            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </motion.button>
+    <Router>
+      <div className="flex h-screen bg-gray-50">
+        <Sidebar />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <Header />
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4">
+            <Routes>
+              <Route path="/" element={<Board />} />
+            </Routes>
+          </main>
         </div>
-      </header>
-
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-
-      <footer className="py-4 px-6 bg-white dark:bg-surface-800 border-t border-surface-200 dark:border-surface-700">
-        <div className="container mx-auto text-center text-surface-500 dark:text-surface-400 text-sm">
-          <p>© {new Date().getFullYear()} TaskFlow. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </Router>
   );
 }
 

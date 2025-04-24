@@ -2,89 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply antialiased;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-semibold;
-  }
-  
-  h1 {
-    @apply text-3xl md:text-4xl;
-  }
-  
-  h2 {
-    @apply text-2xl md:text-3xl;
-  }
-  
-  h3 {
-    @apply text-xl md:text-2xl;
-  }
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
-@layer components {
-  .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-  }
-  
-  .btn-primary {
-    @apply btn bg-primary hover:bg-primary-dark text-white focus:ring-primary/50;
-  }
-  
-  .btn-secondary {
-    @apply btn bg-secondary hover:bg-secondary-dark text-white focus:ring-secondary/50;
-  }
-  
-  .btn-outline {
-    @apply btn border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 focus:ring-surface-200 dark:focus:ring-surface-700;
-  }
-  
-  .card {
-    @apply bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 shadow-card overflow-hidden;
-  }
-  
-  .input {
-    @apply w-full px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary-light/50 transition-all duration-200;
-  }
-  
-  .label {
-    @apply block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1;
-  }
-  
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-  }
-  
-  .badge-primary {
-    @apply badge bg-primary-light/20 text-primary-dark dark:bg-primary-dark/30 dark:text-primary-light;
-  }
-  
-  .badge-secondary {
-    @apply badge bg-secondary-light/20 text-secondary-dark dark:bg-secondary-dark/30 dark:text-secondary-light;
-  }
-  
-  .badge-accent {
-    @apply badge bg-accent/20 text-accent dark:bg-accent/30 dark:text-accent;
-  }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-@layer utilities {
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .neu-light {
-    box-shadow: 5px 5px 15px #d1d9e6, -5px -5px 15px #ffffff;
-  }
-  
-  .neu-dark {
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3), -5px -5px 15px rgba(255, 255, 255, 0.05);
-  }
+/* Custom scrollbar for task columns */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.8);
 }
